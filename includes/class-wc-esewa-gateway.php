@@ -243,7 +243,7 @@ class WC_Esewa_Gateway extends WC_Payment_Gateway
         if ($response_code == 200) {
             $response_data = json_decode($response_body, true);
             if ($response_data && isset($response_data['status'])) {
-                WC_Esewa_Gateway::log('Response Status: ' . $response_data['status']);
+                WC_Esewa_Gateway::log('Order ID ' . $order_id . 'Response Status: ' . $response_data['status']);
                 $esewa_data = [
                     'status' => $response_data['status'],
                     'transaction_code' => $response_data['ref_id'],
