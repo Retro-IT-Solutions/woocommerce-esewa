@@ -6,14 +6,12 @@ include_once dirname( __FILE__ ) . '/class-wc-esewa-gateway-response.php';
 
 class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
 
-    protected $sandbox;
     protected $gateway;
 
-    public function __construct( $gateway, $sandbox = false) {
+    public function __construct( $gateway ) {
         add_action( 'woocommerce_api_wc_esewa_gateway', array( $this, 'check_response' ) );
         add_action( 'valid-esewa-standard-ipn-request', array( $this, 'valid_response' ) );
 
-        $this->sandbox = $sandbox;
         $this->gateway = $gateway;
     }
 
@@ -65,6 +63,9 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
         if ( $order ) {
             WC_Esewa_Gateway::log( 'Found order #' . $order->get_id() );
 
+            // Cancel status status check event
+            $this->esewa_cancel_status_check_event($order->get_id());
+
             $payment_status = 'failed';
             if ( isset( $esewa_data['status'] ) && $esewa_data['status'] === 'COMPLETE') {
                 $payment_status = 'completed';
@@ -78,6 +79,17 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
                 exit;
             }
 
+        }
+    }
+
+    // Cancel status check event
+    public function esewa_cancel_status_check_event($order_id) {
+        $scheduled = wp_next_scheduled('esewa_payment_status_check_event', array($order_id));
+
+        if ( $scheduled ) {
+            // Cancel the scheduled status check event when the order status changes
+            wp_clear_scheduled_hook('esewa_payment_status_check_event', array($order_id));
+            WC_Esewa_Gateway::log('Cancelled scheduled event for order ID: ' . $order_id);
         }
     }
 
