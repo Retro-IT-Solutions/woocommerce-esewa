@@ -13,7 +13,7 @@ class WC_Esewa_Gateway_Request {
 
     // Generate request signature
     private function generate_signature($data, $order) {
-        WC_Esewa_Gateway::log( 'Generating signature for order ' . $order->get_order_number() );
+        WC_Esewa_Gateway::log( 'Generating signature for order ' . $order->get_id() );
         $input_string = "total_amount={$data['total_amount']},transaction_uuid={$data['transaction_uuid']},product_code={$data['product_code']}";
         $secret_key = $this->gateway->merchant_secret;
         $secret_key = htmlspecialchars_decode($secret_key);
@@ -26,12 +26,12 @@ class WC_Esewa_Gateway_Request {
     
     // Generate arguments for eSewa form
     public function get_esewa_args($order) {
-        WC_Esewa_Gateway::log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+        WC_Esewa_Gateway::log( 'Generating payment form for order ' . $order->get_id() . '. Notify URL: ' . $this->notify_url );
         $args = [
             'amount' => wc_format_decimal( $order->get_subtotal() - $order->get_total_discount(), 2 ),
             'tax_amount' => wc_format_decimal( $order->get_total_tax(), 2 ),
             'total_amount' => wc_format_decimal($order->get_total(), 2),
-            'transaction_uuid' => uniqid().esc_html($this->gateway->get_option( 'invoice_prefix' ).'esewa-retro'.$order->get_order_number()), // Generating a UUID for transaction ID
+            'transaction_uuid' => uniqid().esc_html($this->gateway->get_option( 'invoice_prefix' ).'esewa-retro'.$order->get_id()), // Generating a UUID for transaction ID
             'product_code' => $this->gateway->product_code,
             'product_service_charge' => wc_format_decimal( $this->get_service_charge( $order ), 2 ),
             'product_delivery_charge' => wc_format_decimal($order->get_total_shipping(), 2),

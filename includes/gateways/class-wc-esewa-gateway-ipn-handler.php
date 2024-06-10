@@ -71,7 +71,7 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
                 $payment_status = 'completed';
             }
 
-            WC_Esewa_Gateway::log( 'Payment status: ' . $payment_status ); 
+            WC_Esewa_Gateway::log( 'Payment status: ' . $payment_status . 'for order #' . $order->get_id() ); 
 
             if ( method_exists( $this, 'payment_status_' . $payment_status ) ) {
                 call_user_func ( array( $this, 'payment_status_' . $payment_status ), $order, $esewa_data );
@@ -79,6 +79,10 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
                 exit;
             }
 
+        } else {
+            WC_Esewa_Gateway::log('Order not found for order ID ' . $esewa_data['transaction_uuid']);
+            wp_safe_redirect(esc_url_raw(home_url('/error-page')));
+            exit;
         }
     }
 
@@ -115,11 +119,12 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
     // Change status to failed
     protected function payment_status_failed( $order ) {
         $order->update_status( 'failed', __('Payment failed via IPN', 'esewa-woocommerce') );
+        WC_Esewa_Gateway::log('order ID: ' . $order->get_id() . 'failed');
     }
 
     // Create Email to Send Admin for Cancelled Order
     protected function payment_status_paid_cancelled_order( $order ) {
-        WC_Esewa_Gateway::log( 'Preparing Nofication for cancelled order' );
+        WC_Esewa_Gateway::log( 'Preparing Nofication for cancelled order #' . $order->get_id());
         $this->send_ipn_email_notification(
             sprintf( __( 'Payment for cancelled order %s received', 'esewa-woocommerce' ), esc_url( $order->get_edit_order_url() ) ),
             sprintf( __( 'Order #%s has been marked paid by eSewa IPN, but was previously cancelled. Admin handling required.', 'esewa-woocommerce' ), $order->get_order_number() )
