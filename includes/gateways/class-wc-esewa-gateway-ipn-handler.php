@@ -35,9 +35,9 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
         WC_Esewa_Gateway::log( 'Checking IPN response is valid' );
         if ( isset( $esewa_data['transaction_uuid']) && isset( $esewa_data['total_amount'] ) ) {
             $order = $this->get_esewa_order( $esewa_data['transaction_uuid'] );
-            $merchant_total_amount = wc_format_decimal($order->get_total());
+            $merchant_total_amount = wc_format_decimal($order->get_total(), 2);
             $esewa_data['total_amount'] = wc_format_decimal($esewa_data['total_amount'], 2);
-            if ( $order && wc_format_decimal($order->get_total(), 1) !== $esewa_data['total_amount'] ) {
+            if ( $order && $merchant_total_amount !== $esewa_data['total_amount'] ) {
                 WC_Esewa_Gateway::log( 'Amount alert: eSewa amount do not match (sent "' . $order->get_total() . '" | returned "' . $esewa_data['total_amount'] . '").', 'alert' );
                 $esewa_data['total_amount'] = wc_format_decimal($order->get_total(), 1);
             }
