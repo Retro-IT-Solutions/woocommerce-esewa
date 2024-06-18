@@ -28,13 +28,13 @@ class WC_Esewa_Gateway_Request {
     public function get_esewa_args($order) {
         WC_Esewa_Gateway::log( 'Generating payment form for order ' . $order->get_id() . '. Notify URL: ' . $this->notify_url );
         $args = [
-            'amount' => wc_format_decimal( $order->get_subtotal() - $order->get_total_discount(), 2 ),
-            'tax_amount' => wc_format_decimal( $order->get_total_tax(), 2 ),
-            'total_amount' => wc_format_decimal($order->get_total(), 2),
+            'amount' => sprintf("%.2f", $order->get_subtotal() - $order->get_total_discount()),
+            'tax_amount' => sprintf("%.2f",  $order->get_total_tax(), 2 ),
+            'total_amount' => sprintf("%.2f", $order->get_total(), 2),
             'transaction_uuid' => uniqid().esc_html($this->gateway->get_option( 'invoice_prefix' ).'esewa-retro'.$order->get_id()), // Generating a UUID for transaction ID
             'product_code' => $this->gateway->product_code,
-            'product_service_charge' => wc_format_decimal( $this->get_service_charge( $order ), 2 ),
-            'product_delivery_charge' => wc_format_decimal($order->get_total_shipping(), 2),
+            'product_service_charge' => sprintf("%.2f",  $this->get_service_charge( $order ), 2 ),
+            'product_delivery_charge' => sprintf("%.2f", $order->get_total_shipping(), 2),
             'success_url' => $this->limit_length($this->notify_url, 255),
             'failure_url' => esc_url_raw($order->get_cancel_order_url_raw()),
             'signed_field_names' => "total_amount,transaction_uuid,product_code",
