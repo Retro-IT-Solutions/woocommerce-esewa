@@ -23,9 +23,9 @@ abstract class WC_Esewa_Gateway_Response {
     }
 
     // Generate Signature
-    protected function generate_signature( $data ) {
+    protected function generate_signature( $data, $total_amount ) {
         WC_Esewa_Gateway::log( 'Generating response signature ' . $data['transaction_uuid'] );
-        $input_string = "transaction_code={$data['transaction_code']},status={$data['status']},total_amount={$data['total_amount']},transaction_uuid={$data['transaction_uuid']},product_code={$data['product_code']},signed_field_names={$data['signed_field_names']}";
+        $input_string = "transaction_code={$data['transaction_code']},status={$data['status']},total_amount={$total_amount},transaction_uuid={$data['transaction_uuid']},product_code={$data['product_code']},signed_field_names={$data['signed_field_names']}";
         $secret_key = $this->gateway->merchant_secret;
         $secret_key = htmlspecialchars_decode($secret_key);
         $signature = hash_hmac('sha256', $input_string, $secret_key, true);
