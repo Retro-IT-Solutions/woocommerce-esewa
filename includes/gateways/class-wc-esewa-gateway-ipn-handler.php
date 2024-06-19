@@ -35,8 +35,8 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
         WC_Esewa_Gateway::log( 'Checking IPN response is valid' );
         if ( isset( $esewa_data['transaction_uuid']) && isset( $esewa_data['total_amount'] ) ) {
             $order = $this->get_esewa_order( $esewa_data['transaction_uuid'] );
-            $merchant_total_amount = sprintf("%.1f", $order->get_total());
-            $esewa_total_amount = sprintf("%.1f", $esewa_data['total_amount']);
+            $merchant_total_amount = sprintf("%.2f", $order->get_total());
+            $esewa_total_amount = sprintf("%.2f", $esewa_data['total_amount']);
             if ( $order && $merchant_total_amount !== $esewa_total_amount ) {
                 WC_Esewa_Gateway::log( 'Amount alert: eSewa amount do not match (sent "' . $order->get_total() . '" | returned "' . $esewa_data['total_amount'] . '").', 'alert' );
                 return false;
@@ -46,7 +46,7 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
             return false;
         }
         // Check valid signature
-        $merchant_signature = $this->generate_signature( $esewa_data, $merchant_total_amount );
+        $merchant_signature = $this->generate_signature( $esewa_data );
         $esewa_signature = $esewa_data['signature'];
         if ( $merchant_signature === $esewa_signature ) {
             WC_Esewa_Gateway::log( 'Response signature does match' );
