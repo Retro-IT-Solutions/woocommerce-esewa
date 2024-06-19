@@ -216,7 +216,7 @@ class WC_Esewa_Gateway extends WC_Payment_Gateway
         }
 
         // Get order details
-        $total_amount = $order->get_total();
+        $total_amount = sprintf("%.2f", $order->get_total(), 2);
         $transaction_uuid = get_post_meta($order_id, 'transaction_uuid', true);;
 
         // Construct the URL for status check API
