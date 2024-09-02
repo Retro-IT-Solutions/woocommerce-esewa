@@ -36,7 +36,7 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
         if ( isset( $esewa_data['transaction_uuid']) && isset( $esewa_data['total_amount'] ) ) {
             $order = $this->get_esewa_order( $esewa_data['transaction_uuid'] );
             $merchant_total_amount = sprintf("%.2f", $order->get_total());
-            $esewa_total_amount = sprintf("%.2f", $esewa_data['total_amount']);
+            $esewa_total_amount = sprintf("%.2f", str_replace(',', '', $esewa_data['total_amount']));
             if ( $order && $merchant_total_amount !== $esewa_total_amount ) {
                 WC_Esewa_Gateway::log( 'Amount alert: eSewa amount do not match (sent "' . $order->get_total() . '" | returned "' . $esewa_data['total_amount'] . '").', 'alert' );
                 return false;
