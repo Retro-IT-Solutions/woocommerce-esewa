@@ -28,7 +28,7 @@ class WC_Esewa_Gateway_Request {
     public function get_esewa_args($order) {
         WC_Esewa_Gateway::log( 'Generating payment form for order ' . $order->get_id() . '. Notify URL: ' . $this->notify_url );
         $args = [
-            'amount' => sprintf("%.2f", $order->get_subtotal() - $order->get_total_discount()),
+            'amount' => sprintf("%.2f", $order->get_subtotal() - $order->get_discount_total()),
             'tax_amount' => sprintf("%.2f",  $order->get_total_tax(), 2 ),
             'total_amount' => sprintf("%.2f", $order->get_total(), 2),
             'transaction_uuid' => uniqid().esc_html($this->gateway->get_option( 'invoice_prefix' ).'esewa-retro'.$order->get_id()), // Generating a UUID for transaction ID
