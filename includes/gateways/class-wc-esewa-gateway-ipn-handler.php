@@ -119,8 +119,8 @@ class WC_Esewa_Gateway_IPN_Handler extends WC_Esewa_Gateway_Response {
 
     // Change status to failed
     protected function payment_status_failed( $order ) {
-        $order->update_status( 'failed', __('Payment failed via IPN', 'esewa-woocommerce') );
-        WC_Esewa_Gateway::log('order ID: ' . $order->get_id() . 'failed');
+        // $order->update_status( 'failed', __('Payment failed via IPN', 'esewa-woocommerce') );
+        WC_Esewa_Gateway::log('order ID: ' . $order->get_id() . 'failed esewa payment failed');
     }
 
     // Create Email to Send Admin for Cancelled Order
